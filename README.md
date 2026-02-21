@@ -1,27 +1,27 @@
-Instalar MKCert
+ Instalar MKCert
 
-Atualize o sistema e instale:
+Atualize o sistema e instale MKCert:
 
 sudo apt update
 sudo apt install mkcert libnss3-tools -y
-   Criar autoridade certificadora local
+
+Crie a autoridade certificadora local:
+
 mkcert -install
 
-Isso cria uma CA local confiável no seu computador.
+Isso cria uma CA confiável no seu computador.
 
-  Gerar certificados
+ Gerar Certificados
 
 Escolha os domínios que quer usar, por exemplo:
 
 mkcert meuprojeto.local localhost
 
-Isso vai gerar dois arquivos:
+Arquivos gerados:
 
 meuprojeto.local.pem
-
 meuprojeto.local-key.pem
-
- Copiar certificados para o Nginx
+ Copiar Certificados para o Nginx
 sudo mv meuprojeto.local.pem meuprojeto.local-key.pem /etc/nginx/
  Configurar Nginx
 
@@ -29,7 +29,7 @@ Edite o arquivo default ou crie um novo:
 
 sudo nano /etc/nginx/sites-available/default
 
-Exemplo de configuração simples:
+Exemplo de configuração:
 
 server {
     listen 443 ssl;
@@ -45,6 +45,9 @@ server {
         try_files $uri $uri/ =404;
     }
 }
+
+Substitua /caminho/do/seu/projeto pelo diretório da sua aplicação.
+
  Reiniciar Nginx
 sudo systemctl restart nginx
  Testar
