@@ -1,7 +1,23 @@
- Instalar MKCert
+# Configuração de HTTPS Local com MKCert e Nginx
 
-Atualize o sistema e instale MKCert:
+Este tutorial ensina como configurar HTTPS local para uma aplicação utilizando **MKCert** e **Nginx**.  
+O HTTPS será válido apenas para o seu computador (certificados locais).
 
+---
+
+## Pré-requisitos
+
+- Sistema Linux (Ubuntu/Debian)
+- Nginx instalado
+- Acesso ao terminal com sudo
+
+---
+
+## Instalar MKCert
+
+Atualize os pacotes do sistema e instale o MKCert:
+
+```bash
 sudo apt update
 sudo apt install mkcert libnss3-tools -y
 
@@ -9,27 +25,32 @@ Crie a autoridade certificadora local:
 
 mkcert -install
 
-Isso cria uma CA confiável no seu computador.
+Isso cria uma CA confiável no seu computador, permitindo que o navegador aceite os certificados gerados.
 
- Gerar Certificados
+ Gerar os certificados
 
-Escolha os domínios que quer usar, por exemplo:
+Escolha os domínios que quer usar localmente, por exemplo:
 
 mkcert meuprojeto.local localhost
 
-Arquivos gerados:
+Isso vai gerar dois arquivos:
 
-meuprojeto.local.pem
-meuprojeto.local-key.pem
- Copiar Certificados para o Nginx
+meuprojeto.local.pem → certificado
+
+meuprojeto.local-key.pem → chave privada
+
+ Copiar os certificados para o Nginx
+
+Copie os arquivos para o diretório de configuração do Nginx:
+
 sudo mv meuprojeto.local.pem meuprojeto.local-key.pem /etc/nginx/
- Configurar Nginx
+ Configurar o Nginx
 
-Edite o arquivo default ou crie um novo:
+Edite o arquivo de site do Nginx ou crie um novo:
 
 sudo nano /etc/nginx/sites-available/default
 
-Exemplo de configuração:
+Exemplo de configuração HTTPS:
 
 server {
     listen 443 ssl;
@@ -42,18 +63,21 @@ server {
     index index.html;
 
     location / {
-        try_files $uri $uri/ =404;
+        try_files $uri $uri/ /index.html;
     }
 }
 
-Substitua /caminho/do/seu/projeto pelo diretório da sua aplicação.
+Substitua /caminho/do/seu/projeto pelo diretório da sua aplicação (por exemplo dist/ ou build/).
 
- Reiniciar Nginx
+ Reiniciar o Nginx
+
+Após salvar as alterações, reinicie o Nginx para aplicar as mudanças:
+
 sudo systemctl restart nginx
- Testar
+ Testar HTTPS
 
-Abra o navegador e digite:
+Abra o navegador e acesse:
 
 https://meuprojeto.local
 
-Se tudo estiver certo, você verá seu projeto com o cadeado de HTTPS.
+Se tudo estiver certo, você verá seu projeto com o cadeado de HTTPS indicando conexão segura.
